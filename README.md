@@ -27,24 +27,54 @@ For å bruke applikasjonen, må du ha følgende:
      ```
    - Eller last ned ZIP-filen og pakk den ut.
 
-2. **Installer nødvendige avhengigheter:**
-   - Sørg for at Python er installert.
-   - Installer avhengigheter med:
+### **Installer og sett opp virtuelt miljø**
+
+1. **Opprett et virtuelt miljø:**
+   Gå til prosjektmappen og kjør kommandoen:
+
+   - På Windows/macOS/Linux: 
 
      ```bash
-     pip install flask mysql-connector-python
+     python -m venv myenv
      ```
 
-3. **Start applikasjonen:**
-   - Gå til mappen der filene ligger.
+2. **Aktiver det virtuelle miljøet:**
+   - På Windows:
+
+     ```bash
+     .\myenv\Scripts\activate
+     ```
+
+   - På macOS/Linux:
+     ```bash
+     source myenv/bin/activate
+     ```
+
+---
+
+### **Installer nødvendige avhengigheter**
+
+- Sørg for at du har en fil kalt `requirements.txt` i prosjektmappen.
+- Installer avhengigheter med kommandoen:
+
+   ```bash
+   pip install -r requirements.txt
+   ````
+- Hvis filen requirements.txt mangler, kan du installere de viktigste manuelt:
+
+````bash
+pip install flask mysql-connector
+pip install Flask
+````
+   - Deretter gå til mappen der filene ligger.
    - Start applikasjonen:
 
      ```bash
      python app.py
      ```
-   - Åpne nettleseren og gå til: `http://localhost:5000`.
+   - Åpne nettleseren og gå til ip adressen du får fra flask.
 
----
+
 
 ## **Hvordan bruke applikasjonen**
 
@@ -52,8 +82,8 @@ For å bruke applikasjonen, må du ha følgende:
 For å teste applikasjonen, bruk følgende eksisterende konto i databasen:
 
 - Gå til innloggingssiden.
-- **E-post:** `testbruker@example.com`
-- **Passord:** `test1234`
+- **E-post:** `test@user.com`
+- **Passord:** `123`
 - Klikk på **Logg inn**.
 - Hvis du har skrevet riktig informasjon, vil du bli sendt til kalendersiden. Hvis ikke, vil en feilmelding vises.
 
