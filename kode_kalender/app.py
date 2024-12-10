@@ -1,3 +1,4 @@
+#Credits: Julian Magnussen Lund
 from flask import Flask, jsonify, render_template, request, session
 import mysql.connector
 
@@ -52,15 +53,17 @@ def login():
 
 
 
-# Add event route
 @app.route('/add_event', methods=['POST'])
 def add_event():
     try:
         if 'brukerID' not in session:
-            return jsonify({'error': 'Bruker er ikke loget in'}), 401
+            return jsonify({'error': 'Bruker er ikke logget inn'}), 401
 
-        # Get data from the request
+        # Hent data fra forespørsel
         data = request.json
+        if not data:
+            return jsonify({'error': 'Ingen data mottatt'}), 400
+
         brukerID = session['brukerID']
 
         query = """
@@ -80,10 +83,11 @@ def add_event():
         return jsonify({"error": "Det skjedde en uforventet feil"}), 500
 
 
+
 # Default route
 @app.route('/')
 def home():
-    #return render_template('logIn.html')
+    return render_template('logIn.html')
     #return "Database connected and Flask app is running!"
 
 @app.route('/calenderen')

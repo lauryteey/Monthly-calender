@@ -49,39 +49,44 @@ const addNextMonthDays = (dayend) => {
 
 // Hovedfunksjon som oppdaterer kalenderen
 const manipulate = () => {
-    const currentdate = new Date(); // Henter dagens dato
-    const dayone = new Date(year, month, 1).getDay(); // Første dag i måneden
-    const lastdate = new Date(year, month + 1, 0).getDate(); // Siste dato i måneden
-    const dayend = new Date(year, month, lastdate).getDay(); // Siste ukedag
-    const monthlastdate = new Date(year, month, 0).getDate(); // Forrige måneds siste dag
+    const currentdateObj = new Date(); // Oppretter et nytt Date-objekt for å hente dagens dato
+    const dayone = new Date(year, month, 1).getDay(); // Finner ukedagen for den første dagen i måneden
+    const lastdate = new Date(year, month + 1, 0).getDate(); // Finner siste dato i måneden
+    const dayend = new Date(year, month, lastdate).getDay(); // Finner ukedagen for siste dato i måneden
+    const monthlastdate = new Date(year, month, 0).getDate(); // Finner siste dato i forrige måned
 
-    let lit = ""; // Starter med tomt HTML-innhold
-    for (let i = dayone; i > 0; i--) {
-        lit += createDateElement(monthlastdate - i + 1, false, true); // Legger til forrige måneds datoer
-    }
-    for (let i = 1; i <= lastdate; i++) {
-        const isToday = i === date.getDate() && month === date.getMonth() && year === date.getFullYear();
-        lit += createDateElement(i, isToday); // Legger til dagens dato
-    }
-    for (let i = dayend; i < 6; i++) {
-        lit += createDateElement(i - dayend + 1, false, true); // Legger til neste måneds datoer
-    }
+    // Lager HTML-innholdet for datoene i kalenderen
+    let lit = addPreviousMonthDays(dayone, monthlastdate); // Legger til datoene fra forrige måned
+    lit += addCurrentMonthDays(lastdate, currentdateObj, month, year); // Legger til datoene for gjeldende måned
+    lit += addNextMonthDays(dayend); // Legger til datoene for neste måned
 
-    // Sikrer at elementet finnes og oppdaterer teksten for nåværende dato
+    // Sjekker om elementet for nåværende dato finnes
     if (!currentdate) {
-        console.error("Element med klassen 'calendar-current-date' finnes ikke i HTML-en."); // Feilmelding hvis element mangler
-        return; // Stopper hele koden fra å kjøre hvis elementet ikke finnes. JEG HATER JS, JEG SKAL DØ
-    } else {
-        currentdate.innerText = `${months[month]} ${year}`; // Oppdaterer måned og år
-        console.log(currentdate)
+        console.error("Element med 'calendar-current-date'-klassen finnes ikke."); // Feilmelding hvis elementet mangler
+        return; // Stopper funksjonen hvis elementet ikke finnes
     }
 
-    if (day) {
-        day.innerHTML = lit; // Oppdaterer HTML for datoene
-    }
+    currentdate.innerText = `${months[month]} ${year}`; // Oppdaterer teksten for nåværende måned og år
+    day.innerHTML = lit; // Oppdaterer HTML-innholdet for datoene i kalenderen
+    console.log(currentdate);
 };
 
+
+const attachDateListeners = () => {
+    const dates = document.querySelectorAll(".calendar-dates li"); // Henter alle datoer i kalenderen
+    dates.forEach(date => {
+        date.addEventListener("click", () => {
+            console.log("Dato klikket:", date.innerText); // Debug-melding
+            showEventPopup(date.innerText); // Kaller funksjonen for å vise pop-up
+        });
+    });
+};
+
+
+
 manipulate(); // Kaller funksjonen for å oppdatere kalenderen
+attachDateListeners()
+
 
 // Legger til hendelse på navigasjonsknapper
 prenexIcons.forEach(icon => {
@@ -99,53 +104,96 @@ prenexIcons.forEach(icon => {
 });
 
 
-// Funksjon for å håndtere opprettelse av hendelser
-function handleEventCreation() {
-    // Henter verdier fra inputfeltene
-    const eventDate = document.getElementById('event-date').value; // Henter dato og klokkeslett fra inputfeltet
-    const eventName = document.getElementById('event-name').value; // Henter navnet på hendelsen
-    const eventPlace = document.getElementById('event-place').value; // Henter plasseringen av hendelsen
 
-    // Sjekker om nødvendige felter er fylt ut
-    if (!eventDate || !eventName || !eventPlace) {
-        alert("Vennligst fyll ut alle nødvendige felter."); // Viser en melding hvis noen felter mangler
-        return; // Stopper funksjonen hvis felter ikke er fylt ut
+// Legger til en submit-hendelse til skjemaet
+document.getElementById('event-form').addEventListener('submit', async function (e) {
+    e.preventDefault(); // Hindrer standard GET-innsending av skjemaet
+
+    // Henter verdier fra skjemaet
+    const eventName = document.getElementById('event-name').value;
+    const eventDate = document.getElementById('event-date').value;
+    const eventPlace = document.getElementById('event-place').value;
+
+    // Validerer at alle nødvendige felter er fylt ut
+    if (!eventName || !eventDate || !eventPlace) {
+        alert("Vennligst fyll ut alle nødvendige felter."); // Viser feilmelding hvis felter mangler
+        return;
     }
 
-    // Oppretter et JSON-objekt med dataen som skal sendes til backend
-    const eventData = {
-        dato: eventDate.split('T')[0], // Trekker ut datoen fra input (før "T")
-        klokkeslett: eventDate.split('T')[1], // Trekker ut klokkeslettet fra input (etter "T")
-        beskrivelse: eventName, // Setter hendelsesbeskrivelse
-        navn_prosjektet: eventPlace, // Setter navnet på prosjektet/stedet
+    // Oppretter JSON-data
+    const formData = {
+        dato: eventDate.split('T')[0], // Dato
+        klokkeslett: eventDate.split('T')[1], // Klokkeslett
+        beskrivelse: eventName,
+        navn_prosjektet: eventPlace,
     };
 
-    console.log("Sender hendelsesdata:", eventData); // Debug-melding for å vise hva som sendes til backend (Hvis det sendes noen engang LOL)
-
-    // Sender data til serveren ved hjelp av fetch API
-    fetch('/add_event', {
-        method: 'POST', // Bruker POST-metoden for å sende data
-        headers: { 'Content-Type': 'application/json' }, // Setter innholdstypen til JSON
-        body: JSON.stringify(eventData), // Konverterer eventData til en JSON-streng
-    })
-        .then(async response => {
-            // Sjekker om serveren svarte med en rikitg kode
-            if (!response.ok) {
-                // Hvis det oppstod en feil, prøver å hente feilmelding fra serveren
-                const err = await response.json();
-                throw new Error(err.error || 'Kunne ikke lagre hendelsen womp womp.');
-            }
-            return response.json(); // Returnerer serverens svar som et JSON-objekt
-        })
-        .then(result => {
-            console.log('Hendelsen ble lagt til:', result.message); // Viser drømmenmeldingen om suksess i konsollen
-            alert('Hendelsen ble lagret!'); // Viser en melding til brukeren om at hendelsen ble lagret (BIGGEST DREAM)
-        })
-        .catch(error => {
-            console.error('Feil under lagring av hendelsen:', error); // Logger feilen i konsollen :(
-            alert(error.message || 'En feil oppsto under lagring av hendelsen.'); // Viser en feilmelding til brukeren
+    try {
+        // Sender data via fetch API med POST-metode
+        const response = await fetch('/add_event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
         });
-}
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('Hendelsen ble lagret!'); // Suksessmelding
+            hideEventPopup(); // Skjul popup
+        } else {
+            alert(result.error || 'Kunne ikke lagre hendelsen.');
+        }
+    } catch (error) {
+        console.error('Feil under lagring:', error);
+        alert('En feil oppsto. Vennligst prøv igjen.');
+    }
+});
+
+
+
+// Funksjon for å vise pop-up når en dato klikkes
+const showEventPopup = (selectedDate) => {
+    // Henter pop-up-elementet og dato-input-feltet
+    const popup = document.getElementById("event-modal");
+    const eventDateInput = document.getElementById("event-date");
+
+    // Sjekker at nødvendige elementer finnes
+    if (!popup || !eventDateInput) {
+        console.error("Pop-up-elementet eller dato-input mangler!");
+        return; // Stopper funksjonen hvis elementer mangler
+    }
+
+    // Viser pop-up ved å fjerne "hidden"-klassen
+    popup.classList.remove("hidden");
+
+    // Henter dagens dato for å formatere valgt dato
+    const today = new Date();
+    const year = today.getFullYear(); // Finner år
+    const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Finner måned og sikrer to sifre
+    const day = String(selectedDate).padStart(2, "0"); // Sikrer to sifre for valgt dag
+
+    // Kombinerer dato i ønsket format
+    const formattedDate = `${year}-${month}-${day}T12:00`;
+
+    // Setter formatert dato i input-feltet
+    eventDateInput.value = formattedDate;
+};
+
+
+
+
+// Funksjon for å skjule pop-up etter lagring eller avbrytelse
+const hideEventPopup = () => {
+    const popup = document.getElementById("event-modal"); // Henter pop-up-elementet med riktig ID
+    if (popup) {
+        popup.classList.add("hidden"); // Legger til "hidden"-klassen for å skjule pop-up
+    } else {
+        console.error("Pop-up-elementet 'event-modal' finnes ikke!"); // Feilmelding hvis pop-up mangler
+    }
+};
+
+
 
 // Kjøres når DOM-en (HTML-siden) er ferdig lastet
 document.addEventListener("DOMContentLoaded", () => {

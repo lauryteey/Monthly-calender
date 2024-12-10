@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>Calendar</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 </head>
@@ -46,28 +46,29 @@
         <div class="modal-content">
             <span id="close-modal" class="close-button">&times;</span>
             <h2>Event Details</h2>
-            <form id="event-form">
+            <form id="event-form" method="POST">
                 <label for="event-name">Event Name:</label>
                 <input type="text" id="event-name" name="event-name" required>
-    
+            
                 <label for="event-date">Day and Time:</label>
                 <input type="datetime-local" id="event-date" name="event-date" required>
-    
+            
                 <label for="notification">Notification:</label>
                 <select id="notification" name="notification">
                     <option value="1-hour">1 Hour Before</option>
                     <option value="10-minutes">10 Minutes Before</option>
                 </select>
-    
+            
                 <label for="event-place">Place:</label>
                 <input type="text" id="event-place" name="event-place" required>
-    
+            
                 <button type="submit" class="modal-submit">Save Event</button>
             </form>
+            
         </div>
     </div>
     
-    <script src="../static/helvete.js"></script>
+    <script src="{{url_for('static', filename='helvete.js')}}"></script>
 
 </body>
 
