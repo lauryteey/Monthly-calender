@@ -1,12 +1,13 @@
-let date = new Date(); // Oppretter en ny dato
-let year = date.getFullYear(); // Henter år
-let month = date.getMonth(); // Henter måned
+// Oppretter en ny dato
+let date = new Date();
+let year = date.getFullYear(); // Henter året
+let month = date.getMonth(); // Henter måneden (0-indeksert: 0 = Januar, 11 = Desember)
 
-const day = document.querySelector(".calendar-dates"); // Henter elementet for datoer
-const currentdate = document.querySelector(".calendar-current-date"); // Henter elementet for dagens dato
-const prenexIcons = document.querySelectorAll(".calendar-navigation span"); // ikonene for å navigere
+const day = document.querySelector(".calendar-dates"); // Henter elementet som viser datoene
+const currentdate = document.querySelector(".calendar-current-date"); // Henter elementet som viser måned og år
+const prenexIcons = document.querySelectorAll(".calendar-navigation span"); // Henter navigeringsikonene (forrige/neste måned)
 
-// Array med navn på månedene
+// Array med navn på månedene for visning i kalenderen
 const months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -14,8 +15,8 @@ const months = [
 
 // Lager en HTML-representasjon av en dato
 const createDateElement = (dayNumber, isActive = false, isInactive = false) => {
-    const activeClass = isActive ? "active" : ""; // Setter aktiv klasse hvis aktiv
-    const inactiveClass = isInactive ? "inactive" : ""; // Setter inaktiv klasse hvis inaktiv
+    const activeClass = isActive ? "active" : ""; // Hvis datoen er dagens dato, legges klassen "active"
+    const inactiveClass = isInactive ? "inactive" : ""; // Hvis datoen er utenfor gjeldende måned, legges klassen "inactive"
     return `<li class="${activeClass} ${inactiveClass}">${dayNumber}</li>`; // Returnerer HTML for datoen
 };
 
@@ -23,17 +24,17 @@ const createDateElement = (dayNumber, isActive = false, isInactive = false) => {
 const addPreviousMonthDays = (dayone, monthlastdate) => {
     let result = "";
     for (let i = dayone; i > 0; i--) {
-        result += createDateElement(monthlastdate - i + 1, false, true); // Legger til datoer som inaktive
+        result += createDateElement(monthlastdate - i + 1, false, true); // Legger til inaktive datoer fra forrige måned
     }
     return result;
 };
 
-// Legger til datoer for måned
+// Legger til datoer for aktuell måned
 const addCurrentMonthDays = (lastdate, currentdate, month, year) => {
     let result = "";
     for (let i = 1; i <= lastdate; i++) {
-        const isToday = i === currentdate.getDate() && month === currentdate.getMonth() && year === currentdate.getFullYear();
-        result += createDateElement(i, isToday); // Marker dagens dato
+        const isToday = i === currentdate.getDate() && month === currentdate.getMonth() && year === currentdate.getFullYear(); // Sjekker om det er dagens dato
+        result += createDateElement(i, isToday); // Legger til datoen med eller uten "active"-klasse
     }
     return result;
 };
@@ -42,81 +43,72 @@ const addCurrentMonthDays = (lastdate, currentdate, month, year) => {
 const addNextMonthDays = (dayend) => {
     let result = "";
     for (let i = dayend; i < 6; i++) {
-        result += createDateElement(i - dayend + 1, false, true); // Legger til datoer som inaktive
+        result += createDateElement(i - dayend + 1, false, true); // Legger til inaktive datoer fra neste måned
     }
     return result;
 };
 
-// Hovedfunksjon som oppdaterer kalenderen
+// Hovedfunksjon for å oppdatere kalenderen
 const manipulate = () => {
-    const currentdateObj = new Date(); // Oppretter et nytt Date-objekt for å hente dagens dato
+    const currentdateObj = new Date(); // Oppretter et nytt Date-objekt for dagens dato
     const dayone = new Date(year, month, 1).getDay(); // Finner ukedagen for den første dagen i måneden
     const lastdate = new Date(year, month + 1, 0).getDate(); // Finner siste dato i måneden
     const dayend = new Date(year, month, lastdate).getDay(); // Finner ukedagen for siste dato i måneden
     const monthlastdate = new Date(year, month, 0).getDate(); // Finner siste dato i forrige måned
 
-    // Lager HTML-innholdet for datoene i kalenderen
-    let lit = addPreviousMonthDays(dayone, monthlastdate); // Legger til datoene fra forrige måned
-    lit += addCurrentMonthDays(lastdate, currentdateObj, month, year); // Legger til datoene for gjeldende måned
-    lit += addNextMonthDays(dayend); // Legger til datoene for neste måned
+    // Kombinerer HTML-innhold for kalenderen
+    let lit = addPreviousMonthDays(dayone, monthlastdate); // Legger til datoer fra forrige måned
+    lit += addCurrentMonthDays(lastdate, currentdateObj, month, year); // Legger til datoer for inneværende måned
+    lit += addNextMonthDays(dayend); // Legger til datoer for neste måned
 
-    // Sjekker om elementet for nåværende dato finnes
-    if (!currentdate) {
-        console.error("Element med 'calendar-current-date'-klassen finnes ikke."); // Feilmelding hvis elementet mangler
-        return; // Stopper funksjonen hvis elementet ikke finnes
-    }
-
-    currentdate.innerText = `${months[month]} ${year}`; // Oppdaterer teksten for nåværende måned og år
-    day.innerHTML = lit; // Oppdaterer HTML-innholdet for datoene i kalenderen
-    console.log(currentdate);
+    // Oppdaterer tekst og datoer i kalenderen
+    currentdate.innerText = `${months[month]} ${year}`; // Viser aktuell måned og år
+    day.innerHTML = lit; // Oppdaterer HTML for datoene i kalenderen
 };
 
-
-manipulate(); // Kaller funksjonen for å oppdatere kalenderen
-attachDateListeners()
-
-
-// Legger til hendelse på navigasjonsknapper
-prenexIcons.forEach(icon => {
-    icon.addEventListener("click", () => {
-        month = icon.id === "calendar-prev" ? month - 1 : month + 1; // Endrer måned
-
-        if (month < 0 || month > 11) { // Håndterer grenseverdier for måned
-            date = new Date(year, month, 1);
-            year = date.getFullYear();
-            month = date.getMonth();
-        }
-
-        manipulate(); // Oppdaterer kalenderen
-    });
-});
-
+// Funksjon for å legge til klikk-hendelser for datoer
 const attachDateListeners = () => {
-    const dates = document.querySelectorAll(".calendar-dates li"); // Henter alle datoer i kalenderen
+    const dates = document.querySelectorAll(".calendar-dates li"); // Henter alle datoelementer
     dates.forEach(date => {
         date.addEventListener("click", () => {
-            console.log("Dato klikket:", date.innerText); // Debug-melding
-            showEventPopup(date.innerText); // Kaller funksjonen for å vise pop-up
+            console.log("Dato klikket:", date.innerText); // Logger datoen som ble klikket
+            showEventPopup(date.innerText); // Viser pop-up for å opprette eller vise hendelser
         });
     });
 };
 
-// Legger til en submit-hendelse til skjemaet
+// Kaller hovedfunksjonen for å oppdatere kalenderen
+manipulate();
+attachDateListeners(); // Legger til lyttere for datoene
+
+// Legger til navigasjonslogikk for forrige/neste måned
+prenexIcons.forEach(icon => {
+    icon.addEventListener("click", () => {
+        month = icon.id === "calendar-prev" ? month - 1 : month + 1; // Justerer måned basert på knapp
+
+        if (month < 0 || month > 11) { // Håndterer endring av år
+            date = new Date(year, month, 1); // Oppdaterer datoobjekt
+            year = date.getFullYear(); // Oppdaterer året
+            month = date.getMonth(); // Oppdaterer måneden
+        }
+
+        manipulate(); // Oppdaterer kalenderen for den nye måneden
+    });
+});
+
+// Legger til en submit-hendelse for event-skjemaet
 document.getElementById('event-form').addEventListener('submit', async function (e) {
-    e.preventDefault(); // Hindrer standard GET-innsending av skjemaet
+    e.preventDefault(); // Hindrer standard skjemaoppførsel (GET)
 
-    // Henter verdier fra skjemaet
-    const eventName = document.getElementById('event-name').value;
-    const eventDate = document.getElementById('event-date').value;
-    const eventPlace = document.getElementById('event-place').value;
+    const eventName = document.getElementById('event-name').value; // Henter navn på hendelse
+    const eventDate = document.getElementById('event-date').value; // Henter dato og tid for hendelse
+    const eventPlace = document.getElementById('event-place').value; // Henter sted for hendelse
 
-    // Validerer at alle nødvendige felter er fylt ut
-    if (!eventName || !eventDate || !eventPlace) {
-        alert("Vennligst fyll ut alle nødvendige felter."); // Viser feilmelding hvis felter mangler
+    if (!eventName || !eventDate || !eventPlace) { // Sjekker at nødvendige felter er fylt ut
+        alert("Vennligst fyll ut alle nødvendige felter."); // Feilmelding hvis felter mangler
         return;
     }
 
-    // Oppretter JSON-data
     const formData = {
         dato: eventDate.split('T')[0], // Dato
         klokkeslett: eventDate.split('T')[1], // Klokkeslett
@@ -125,69 +117,46 @@ document.getElementById('event-form').addEventListener('submit', async function 
     };
 
     try {
-        // Sender data via fetch API med POST-metode
         const response = await fetch('/add_event', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(formData), // Sender JSON-data
         });
 
         const result = await response.json();
 
         if (response.ok) {
-            alert('Hendelsen ble lagret!'); // Suksessmelding
-            hideEventPopup(); // Skjul popup
+            alert('Hendelsen ble lagret!'); // Melding om at det klartes
+            hideEventPopup(); // Skjuler pop-up
         } else {
-            alert(result.error || 'Kunne ikke lagre hendelsen.');
+            alert(result.error || 'Kunne ikke lagre hendelsen.'); // Feilmelding fra serveren
         }
     } catch (error) {
-        console.error('Feil under lagring:', error);
-        alert('En feil oppsto. Vennligst prøv igjen.');
+        console.error('Feil under lagring:', error); // Logger feil
+        alert('En feil oppsto. Vennligst prøv igjen.'); // Viser generell feilmelding
     }
 });
 
-
-
-// Funksjon for å vise pop-up når en dato klikkes
+// Funksjon for å vise pop-up for å legge til hendelser
 const showEventPopup = (selectedDate) => {
-    // Henter pop-up-elementet og dato-input-feltet
-    const popup = document.getElementById("event-modal");
-    const eventDateInput = document.getElementById("event-date");
-
-    // Sjekker at nødvendige elementer finnes
-    if (!popup || !eventDateInput) {
-        console.error("Pop-up-elementet eller dato-input mangler!");
-        return; // Stopper funksjonen hvis elementer mangler
+    const popup = document.getElementById("event-modal"); // Henter pop-up-element
+    if (!popup) {
+        console.error("Pop-up-elementet finnes ikke!");
+        return;
     }
 
-    // Viser pop-up ved å fjerne "hidden"-klassen
-    popup.classList.remove("hidden");
-
-    // Henter dagens dato for å formatere valgt dato
-    const today = new Date();
-    const year = today.getFullYear(); // Finner år
-    const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Finner måned og sikrer to sifre
-    const day = String(selectedDate).padStart(2, "0"); // Sikrer to sifre for valgt dag
-
-    // Kombinerer dato i ønsket format
-    const formattedDate = `${year}-${month}-${day}T12:00`;
-
-    // Setter formatert dato i input-feltet
-    eventDateInput.value = formattedDate;
+    popup.classList.remove("hidden"); // Fjerner "hidden"-klassen for å vise pop-up
+    const eventDateInput = document.getElementById("event-date"); // Henter dato-inputfeltet
+    const formattedDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}T12:00`;
+    eventDateInput.value = formattedDate; // Setter valgt dato i input-feltet
 };
 
-
-
-
-// Funksjon for å skjule pop-up etter lagring eller avbrytelse
+// Funksjon for å skjule pop-up
 const hideEventPopup = () => {
-    const popup = document.getElementById("event-modal"); // Henter pop-up-elementet med riktig ID
-    if (popup) {
-        popup.classList.add("hidden"); // Legger til "hidden"-klassen for å skjule pop-up
-    } else {
-        console.error("Pop-up-elementet 'event-modal' finnes ikke!"); // Feilmelding hvis pop-up mangler
-    }
+    const popup = document.getElementById("event-modal");
+    if (popup) popup.classList.add("hidden"); // Legger til "hidden"-klassen for å skjule pop-up
 };
+
 
 
 
