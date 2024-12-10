@@ -72,18 +72,6 @@ const manipulate = () => {
 };
 
 
-const attachDateListeners = () => {
-    const dates = document.querySelectorAll(".calendar-dates li"); // Henter alle datoer i kalenderen
-    dates.forEach(date => {
-        date.addEventListener("click", () => {
-            console.log("Dato klikket:", date.innerText); // Debug-melding
-            showEventPopup(date.innerText); // Kaller funksjonen for å vise pop-up
-        });
-    });
-};
-
-
-
 manipulate(); // Kaller funksjonen for å oppdatere kalenderen
 attachDateListeners()
 
@@ -103,7 +91,15 @@ prenexIcons.forEach(icon => {
     });
 });
 
-
+const attachDateListeners = () => {
+    const dates = document.querySelectorAll(".calendar-dates li"); // Henter alle datoer i kalenderen
+    dates.forEach(date => {
+        date.addEventListener("click", () => {
+            console.log("Dato klikket:", date.innerText); // Debug-melding
+            showEventPopup(date.innerText); // Kaller funksjonen for å vise pop-up
+        });
+    });
+};
 
 // Legger til en submit-hendelse til skjemaet
 document.getElementById('event-form').addEventListener('submit', async function (e) {
