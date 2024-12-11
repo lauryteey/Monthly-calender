@@ -3,13 +3,12 @@
 ## **Introduksjon**
 Denne brukerveiledningen gjelder for **beta-versjonen** av kalenderapplikasjonen. Applikasjonen er under utvikling, og nye funksjoner vil bli lagt til i fremtidige versjoner. I denne versjonen kan brukeren:
 
+- Opprette brukerkontoer.
 - Opprette hendelser med detaljer som dato, tid, beskrivelse og sted.
-- Navigere gjennom en oversiktlig kalender som viser alle hendelsene som bruker legger til.
-
-**Merk: Funksjonen for å opprette nye brukere er ikke tilgjengelig i denne versjonen, men den vil bli lagt til snart.**
+- Vise en oversikt over alle eventer som brukeren har opprettet.
 
 --- 
-Hensikten med applikasjonen er å gi brukeren en enkel måte å organisere sitt daglige liv og arbeidsoppgaver. Alt lagres trygt i en MariaDB/MySQL-database, slik at informasjonen til brukeren er tilgjengelig når brukeren trenger det. Enten det brukes til personlige oppgaver eller profesjonelle arrangementer, er denne kalenderapplikasjonen laget for å være fleksibel og intuitiv.
+Hensikten med applikasjonen er å gi brukeren en enkel måte å organisere sitt daglige liv og arbeidsoppgaver. Alt lagres trygt i en MariaDB/MySQL-database, slik at informasjonen til brukeren er tilgjengelig når brukeren trenger det. Enten det brukes til personlige oppgaver eller profesjonelle arrangementer, er ideen med denne kalenderapplikasjonen laget for å være fleksibel og intuitiv.
 
 ---
 
@@ -72,17 +71,17 @@ pip install Flask
      ```bash
      python app.py
      ```
-   - Åpne nettleseren og gå til ip adressen du får fra flask.
+   - Åpne nettleseren og gå til ip adressen du får fra flask med ````CTRL + click````
 
 
 
 ## **Hvordan bruke applikasjonen**
 
-### **1. Logge inn**
-For å teste applikasjonen, bruk følgende eksisterende konto i databasen:
+### **1. Logge inn eller registrere deg inn**
+For å teste applikasjonen, kan du oprette din eget bruker og deretter logge inn.
 
-- Gå til innloggingssiden.
-- **E-post:** `test@user.com`
+- Gå til innloggingssiden og legg til nødvendige informajson, for eksempel: 
+- **E-post:** `test_user@gmail.com`
 - **Passord:** `123`
 - Klikk på **Logg inn**.
 - Hvis du har skrevet riktig informasjon, vil du bli sendt til kalendersiden. Hvis ikke, vil en feilmelding vises.
@@ -90,19 +89,19 @@ For å teste applikasjonen, bruk følgende eksisterende konto i databasen:
 ---
 ### **3. Vise kalenderen**
 - Etter at du logger inn, vil du se kalenderen.
-- Hendelser vises på datoene de er planlagt.
-- Klikk på en dato for å se detaljer om hendelser.
+- Du kan se både forrige og fremtidige datoer.
+- Du kan se eventene du lager ved å klikke på **Vise eventer**
 
 ---
 
 ### **2. Opprette en ny hendelse**
-1. Klikk på knappen **Legg til hendelse**.
+1. Klikk på datoen du vil legge en event til.
 2. Fyll ut skjemaet:
 
    - **Dato og tid**: Velg dato og tid for hendelsen.
    - **Navn på hendelsen**: Beskriv hva hendelsen handler om.
    - **Sted**: Skriv inn hvor hendelsen finner sted.
-   - **Påminnelse (valgfritt)**: Velg om du vil ha en påminnelse før hendelsen.
+   - **Påminnelse**: Velg når du vil ha en påminnelse før hendelsen.
 
 3. Klikk **Lagre** for å lagre hendelsen.
 
@@ -110,8 +109,9 @@ For å teste applikasjonen, bruk følgende eksisterende konto i databasen:
 
 ## **Funksjoner forklart**
 
-### **a. Logg inn**
-- Bruker e-post og passord for å bekrefte hvem du er.
+### **a. Logg inn og registrer deg**
+- lar brukeren lage sitt eget bruker 
+- Bruker e-post og passord for å bekrefte hvem brukeren er og gir deg tilgang til calenderen.
 - Hvis brukeren finnes i databasen og passordet er riktig, får du tilgang til kalenderen.
 
 ### **b. Opprette hendelser**
@@ -119,19 +119,23 @@ For å teste applikasjonen, bruk følgende eksisterende konto i databasen:
 - Brukes for å holde oversikt over hva som skjer og når.
 
 ### **c. Kalender**
-- Viser hendelsene dine på en oversiktlig måte.
 - Gir deg tilgang til å navigere mellom datoer.
+- Viser dagens dato, oppdateres daglig. 
 
-### **d. Påminnelser**
+### **d. Vise eventer**
+- Viser en liste over eventer som brukeren oppretter 
+- Lar deg legge til flere eventer 
+
+### **e. Påminnelser**
 - **(Kommende funksjon)**: Sender e-postpåminnelser 1 time eller 10 minutter før hendelsen starter.
 
 
 ---
 
 ## **Kommende funksjoner**
-- **Opprette bruker:** I neste versjon vil brukerne kunne registrere seg og opprette sine egne kontoer.
 - **Påminnelser:** E-postpåminnelser vil bli sendt 1 time eller 10 minutter før en hendelse.
-- **Redigere og slette hendelser:** Brukere vil kunne oppdatere eller fjerne eksisterende hendelser.
+- **Redigere og slette eventer:** Brukere vil kunne oppdatere eller fjerne eksisterende hendelser.
+- **Logge seg ut:** Brukere kan logge seg in og ut når som helst
 
 ---
 
