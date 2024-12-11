@@ -1,8 +1,8 @@
-
 // Kjøres når DOM-en (HTML-siden) er ferdig lastet
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("login-form"); // Henter login-skjemaet fra HTML
     const loginMessage = document.getElementById("login-message"); // Henter elementet for å vise login-meldinger
+    const signupBtn = document.getElementById("signup-btn"); // Henter "Sign Up"-knappen fra HTML
 
     if (loginForm) {
         // Lytter etter innsending av skjemaet
@@ -15,8 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Sjekker om e-post og passord er fylt ut
             if (!email || !password) {
-                loginMessage.textContent = "Vennligst fyll inn både e-post og passord."; // Viser feilmelding
-                loginMessage.style.color = "red"; // Endrer tekstfargen til rød
+                showMessage("Vennligst fyll inn både e-post og passord.", "red"); // Viser feilmelding i rød tekst
                 return; // Stopper funksjonen hvis felter mangler
             }
 
@@ -24,30 +23,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Sender login-data til serveren
                 const response = await fetch("/login", {
                     method: "POST", // Bruker POST-metoden
-                    headers: { "Content-Type": "application/json" }, // Setter innholdstypen til JSON
-                    body: JSON.stringify({ e_post: email, passord: password }), // Konverterer e-post og passord til JSON
+                    headers: { "Content-Type": "application/json" }, // Angir at dataen som sendes er JSON
+                    body: JSON.stringify({ e_post: email, passord: password }), // Sender e-post og passord som JSON
                 });
 
                 if (!response.ok) {
-                    // Hvis login feilet, henter feilmeldingen fra serveren
+                    // Hvis login feiler, henter feilmeldingen fra serveren
                     const errorData = await response.json();
-                    throw new Error(errorData.error || "Innlogging mislyktes.");
+                    throw new Error(errorData.error || "Innlogging mislyktes."); // Kaster en feil med serverens melding
                 }
 
                 const result = await response.json(); // Henter suksessdata fra serveren
-                console.log("Innlogging vellykket, yay!:", result.message); // Logger suksessmeldingen
                 window.location.href = result.redirect || "/calendar"; // Omadresserer brukeren til kalenderen
             } catch (error) {
-                console.error("En feil oppsto under innlogging:", error); // Logger feilen i konsollen
-                loginMessage.textContent = error.message || "Feil e-post eller passord."; // Viser feilmeldingen til brukeren
-                loginMessage.style.color = "red"; // Endrer tekstfargen til rød
+                showMessage(error.message || "Feil e-post eller passord.", "red"); // Viser feilmeldingen i rød tekst
             }
         });
     }
-});
 
+    if (signupBtn) {
+        // Lytter etter klikk på "Sign Up"-knappen
+        signupBtn.addEventListener("click", () => {
+            window.location.href = "/sign_up"; // Går til registreringssiden
+        });
+    }
 
-// Redirect to sign-up page on button click
-document.getElementById('signup-btn').addEventListener('click', () => {
-    window.location.href = '/sign_up'; // Redirects to the sign-up route
+    // Funksjon for å vise meldinger
+    function showMessage(message, color) {
+        if (loginMessage) {
+            loginMessage.textContent = message; // Setter meldingsteksten
+            loginMessage.style.color = color; // Angir fargen på meldingen
+        }
+    }
 });

@@ -67,6 +67,7 @@ const manipulate = () => {
     day.innerHTML = lit; // Oppdaterer HTML for datoene i kalenderen
 };
 
+
 // Funksjon for å legge til klikk-hendelser for datoer
 const attachDateListeners = () => {
     const dates = document.querySelectorAll(".calendar-dates li"); // Henter alle datoelementer
@@ -82,7 +83,7 @@ const attachDateListeners = () => {
 
 // Kaller hovedfunksjonen for å oppdatere kalenderen
 manipulate();
-attachDateListeners();// Legger til lyttere for datoene
+attachDateListeners();// Legger til  for datoene
 
 // Legger til navigasjonslogikk for forrige/neste måned
 prenexIcons.forEach(icon => {
@@ -117,9 +118,9 @@ document.getElementById('event-form').addEventListener('submit', async function 
     const formData = {
         dato: eventDate.split('T')[0],       // Dato
         klokkeslett: eventDate.split('T')[1],// Klokkeslett
-        navn_prosjektet: eventName,         // Navn på prosjektet
-        sted: eventPlace,                   // Sted
-        notification: document.getElementById('notification').value // Notification
+        navn_prosjektet: eventName, // Navn på prosjektet
+        sted: eventPlace,           
+        notification: document.getElementById('notification').value // Varsling
     };
 
 
@@ -133,10 +134,10 @@ document.getElementById('event-form').addEventListener('submit', async function 
         const result = await response.json();
 
         if (response.ok) {
-            alert('Hendelsen ble lagret!'); // Melding om at det klartes
+            alert('Eventet ble lagret Yay!'); // Melding om at det klartes
             hideEventPopup(); // Skjuler pop-up
         } else {
-            alert(result.error || 'Kunne ikke lagre hendelsen.'); // Feilmelding fra serveren
+            alert(result.error || 'Kunne ikke lagre eventen womp womp.'); // Feilmelding fra serveren
         }
     } catch (error) {
         console.error('Feil under lagring:', error); // Logger feil
@@ -146,13 +147,13 @@ document.getElementById('event-form').addEventListener('submit', async function 
 
 // Funksjon for å vise pop-up for å legge til hendelser
 const showEventPopup = (selectedDate) => {
-    const popup = document.getElementById("event-modal"); // Henter pop-up-elementet
+    const popup = document.getElementById("event-modal"); // Henter pop-up-elementet i HTML
     if (!popup) {
         console.error("Pop-up-elementet finnes ikke!");
         return;
     }
 
-    // Henter input-feltet for dato og lager korrekt dato basert på valgt måned og år
+    // Henter input-feltet for dato og lager rikitg dato basert på valgt måned og år
     const eventDateInput = document.getElementById("event-date");
     const formattedDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}T12:00`;
 
@@ -167,7 +168,11 @@ const hideEventPopup = () => {
     if (popup) popup.classList.add("hidden"); // Legger til "hidden"-klassen for å skjule pop-up
 };
 
-// Omdirigerer "Legg til arrangement"-knappen til kalenderens side
+// Går til  "Legg til arrangement"-knappen til kalenderens side
 document.getElementById('add-event-btn').addEventListener('click', () => {
     window.location.href = '/calenderen'; // Går til kalenderens URL
 });
+
+
+
+

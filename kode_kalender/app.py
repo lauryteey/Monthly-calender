@@ -8,10 +8,10 @@ app.secret_key = 'Hei, secret key'  # En tilfeldig nøkkel som brukes til å kry
 
 # Kobling til global database
 conn = mysql.connector.connect(
-    host="10.2.4.56",         # IP-adressen til databasen.
-    user="calender_user",     # Brukernavnet for å koble til databasen.
-    password="123",           # Passordet for databasen.
-    database="calender"       # Navnet på databasen som skal brukes.
+    host="88.95.146.186",         
+    user="calender_user",     
+    password="123",           
+    database="calender"       
 )
 
 # Global cursor for å utføre spørringer i databasen
@@ -62,36 +62,32 @@ def add_event():
         if 'brukerID' not in session:
             return jsonify({'error': 'Bruker er ikke logget inn'}), 401
 
-        # Hent data fra forespørselen
         data = request.json
         if not data:
             return jsonify({'error': 'Ingen data mottatt'}), 400
 
         brukerID = session['brukerID']
 
-        # Oppdater spørringen for å inkludere 'notification'
         query = """
             INSERT INTO events_ny (dato, klokkeslett, navn_prosjektet, sted, notification, brukerID)
             VALUES (%s, %s, %s, %s, %s, %s)
         """
         values = (
-            data['dato'],               # Dato
-            data['klokkeslett'],        # Klokkeslett
-            data['navn_prosjektet'],    # Navn på prosjektet
-            data['sted'],               # Sted
-            data['notification'],       # Notification
-            brukerID                    # BrukerID
+            data['dato'],               
+            data['klokkeslett'],        
+            data['navn_prosjektet'],    
+            data['sted'],               
+            data['notification'],       
+            brukerID                    
         )
         cursor.execute(query, values)
         conn.commit()
 
         return jsonify({"message": "Eventet er lagret!"}), 200
-    except mysql.connector.Error as e:
-        print(f"Feil i databasen under add_event: {e}")
-        return jsonify({"error": "Det skjedde en feil i databasen"}), 500
     except Exception as e:
-        print(f"Uforventet feil under add_event: {e}")
-        return jsonify({"error": "Det skjedde en uforventet feil"}), 500
+        print(f"Error adding event: {e}")
+        return jsonify({'error': 'Feil under lagring av event'}), 500
+
 
 
 
@@ -105,6 +101,8 @@ def get_events():
         query = "SELECT dato, klokkeslett, navn_prosjektet, sted, notification FROM events_ny WHERE brukerID = %s"
         cursor.execute(query, (brukerID,))
         events = cursor.fetchall()
+        
+        print("Query result:", events)  # Debug print
 
         # Convert non-serializable fields
         for event in events:
@@ -117,6 +115,7 @@ def get_events():
     except Exception as e:
         print(f"Error fetching events: {e}")
         return jsonify({'error': 'Feil i databasen'}), 500
+
 
 
 # Flask route for creating a new user
@@ -167,9 +166,11 @@ def create_user():
         return jsonify({"error": "En uventet feil oppsto."}), 500
 
 
+
 @app.route('/sign_up')
 def sign_up():
     return render_template('SignUp.html')  # Ensure this is your sign-up HTML file
+
 
 
 @app.route('/show_events')
@@ -180,11 +181,13 @@ def show_events():
     return render_template('ShowEvents.html')  # Render the Show Events page
 
 
+
 # Default route (Hjemmeside)
 @app.route('/')
 def home():
     # Viser innloggingssiden.
     return render_template('logIn.html')
+
 
 # Kalenderens hovedside
 @app.route('/calenderen')
@@ -194,6 +197,7 @@ def calenderen():
         return jsonify({'error': 'Bruker er ikke logget inn'}), 401
     # Viser kalendersiden hvis brukeren er logget inn.
     return render_template('index.html')
+
 
 # Starter Flask-applikasjonen
 if __name__ == '__main__':
