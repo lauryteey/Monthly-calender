@@ -52,7 +52,7 @@ async function fetchEvents() {
             `;
         }).join(""); // Slår sammen alle HTML-strukturer til én streng
     } catch (error) {
-        // Logger en forbedret feilmelding til konsollen
+        // feilhåndtering
         console.error("En feil oppsto under henting av eventer:", error.message);
     }
 }

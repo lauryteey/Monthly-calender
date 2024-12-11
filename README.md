@@ -135,7 +135,7 @@ For å teste applikasjonen, kan du oprette din eget bruker og deretter logge inn
 ## **Kommende funksjoner**
 - **Påminnelser:** E-postpåminnelser vil bli sendt 1 time eller 10 minutter før en hendelse.
 - **Redigere og slette eventer:** Brukere vil kunne oppdatere eller fjerne eksisterende hendelser.
-- **Logge seg ut:** Brukere kan logge seg in og ut når som helst
+- **Logge seg ut:** Brukere kan logge seg in og ut når som helst.
 
 ---
 

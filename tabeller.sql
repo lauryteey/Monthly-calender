@@ -8,6 +8,15 @@ CREATE TABLE events_ny (
     brukerID INT NOT NULL
 );
 
+-- Create the bruker table
+CREATE TABLE bruker (
+    brukerID INT AUTO_INCREMENT PRIMARY KEY,
+    e_post VARCHAR(255) NOT NULL UNIQUE,     
+    passord VARCHAR(255) NOT NULL,           
+    fornavn VARCHAR(100) NOT NULL,           
+    etternavn VARCHAR(100) NOT NULL,         
+);
+
 /*Query for å søke et bestemt event fra en bestemt user*/
 SELECT * 
 FROM events_ny 
@@ -20,8 +29,13 @@ AND brukerID = (
 );
 
 --Hvis man vet bruker ID
-
 SELECT * 
 FROM events_ny 
-WHERE navn_prosjektet = 'EventNameHere' 
+WHERE navn_prosjektet = ''
 AND brukerID = 1; 
+
+DESCRIBE bruker;
+DESCRIBE events_ny;
+
+SELECT * FROM events_ny;
+SELECT * FROM bruker;
