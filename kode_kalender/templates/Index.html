@@ -11,8 +11,12 @@
 </head>
 
 <body>
+    <header>
+        <!-- knappen for å gå til show events -->
+        <a href="{{url_for('show_events')}}" class="show-events-btn">Show Events</a>
+    </header>
 
-<!-- Kalenderen container -->
+    <!-- Kalenderen container -->
     <div class="calendar-container">
         <header class="calendar-header">
             <p class="calendar-current-date"></p>
@@ -40,35 +44,37 @@
         </div>
     </div>
 
-    
- <!-- POP-UP event til kalenderen -->
+
+    <!-- POP-UP event til kalenderen -->
     <div id="event-modal" class="modal hidden">
         <div class="modal-content">
-            <span id="close-modal" class="close-button" onclick= "hideEventPopup()">&times;</span>
-            <h2>Event Details</h2>
+            <span id="close-modal" class="close-button" onclick="hideEventPopup()">&times;</span>
+            <h2>Ny event</h2>
             <form id="event-form" method="POST">
-                <label for="event-name">Event Name:</label>
+                <label for="event-name">Navnet til eventet</label>
                 <input type="text" id="event-name" name="event-name" required>
-            
-                <label for="event-date">Day and Time:</label>
+
+                <label for="event-date">Dato og timen</label>
                 <input type="datetime-local" id="event-date" name="event-date" required>
-            
-                <label for="notification">Notification:</label>
+
+                <label for="notification">Varsling:</label>
                 <select id="notification" name="notification">
-                    <option value="1-hour">1 Hour Before</option>
-                    <option value="10-minutes">10 Minutes Before</option>
+                    <option value="1-hour">1 time før</option>
+                    <option value="10-minutes">10 minutter før</option>
                 </select>
-            
-                <label for="event-place">Place:</label>
+
+                <label for="event-place">Sted</label>
                 <input type="text" id="event-place" name="event-place" required>
-            
-                <button type="submit" class="modal-submit">Save Event</button>
+
+                <br><br>
+
+                <button type="submit" class="modal-submit">Lagre eventet</button>
             </form>
-            
+
         </div>
     </div>
-    
-    <script src="{{url_for('static', filename='helvete.js')}}"></script>
+
+    <script src="{{url_for('static', filename='calender.js')}}"></script>
 
 </body>
 
